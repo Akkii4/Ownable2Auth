@@ -1,75 +1,89 @@
-## Scripts
+# Ownable2Auth
 
-This repository includes the following scripts in the `package.json` file:
+Ownable2Auth is an abstract Solidity contract that provides a basic access control mechanism with a two-step ownership transfer/renounce process.
 
-### Test
+## Features
 
-`npm run test`
+- Single owner of contract
+- `onlyOwner` modifier restricts access to owner-only functions
+- Ownership can be transferred to a new owner
+- New owner must accept transfer
+- Two-step process to renounce ownership
 
-This command runs the test suite for the contract using the Hardhat testing framework. It will execute the command `npx hardhat test`, which will run all the tests in the project. The tests are used to check that the contract behaves as expected and to ensure that any changes made to the contract don't break existing functionality.
+## Usage
 
-### Test with coverage
+Inherit from the Ownable2Auth contract to gain the ownership features:
 
-`npm run test:coverage`
+```solidity
+import "./Ownable2Auth.sol";
 
-This command runs the test suite and generates a coverage report for the contract. It will execute the command `npx hardhat coverage`, which will run all the tests in the project and also generate a coverage report. A coverage report shows how much of the contract's code is being executed by the test suite.
-
-### Compile
-
-```
-npm run compile
-```
-
-This command compiles the contract using the Hardhat compiler. It will execute the command `npx hardhat compile`, which will compile the contract code, and generate the bytecode and ABI needed to deploy the contract on the Ethereum blockchain.
-
-### Lint TypeScript
-
-```
-npm run lint:js
+contract MyContract is Ownable2Auth {
+  // Contract now has owner capabilities
+}
 ```
 
-This command runs the ESLint linter on all TypeScript files in the project. It will execute the command `npx eslint '**/*.js'`, which will check all TypeScript files in the project against a set of linting rules and report any errors or warnings.
+Deploy the contract while passing in the initial owner address.
 
-### Lint TypeScript and fix issues
+Later transfer ownership by calling `transferOwnership` and new owner calls `acceptOwnership`.
+
+Renounce ownership in two steps by first calling `initiateRenounceOwnership` and then `renounceOwnership`.
+
+## Functions
+
+**owner**
+
+Returns the address of the current owner.
+
+**pendingOwner**
+
+Returns the address of the pending owner.
+
+**transferOwnership**
+
+Transfers ownership to a new address. Emits an event.
+
+**acceptOwnership**
+
+Called by the new owner to accept the ownership transfer.
+
+**renounceOwnership**
+
+Renounces ownership by transferring to the zero address. Requires initiateRenounceOwnership to be called first.
+
+**onlyOwner**
+
+Modifier to restrict access to only the owner.
+
+## Events
+
+**OwnershipTransferStarted**
+
+Emitted when transferOwnership is called to start a new pending owner.
+
+**OwnershipTransferred**
+
+Emitted when a transfer completes through acceptOwnership or renounceOwnership.
+
+## Usage
+
+Install dependencies:
 
 ```
-npm run lint:js-fix
+npm install
 ```
 
-This command runs the ESLint linter on all TypeScript files in the project and automatically fix any issues it finds.
-
-### Lint Solidity
+Compile:
 
 ```
-npm run lint:sol
+npx hardhat compile
 ```
 
-This command runs the Prettier and Solhint linters on all the Solidity files in the project. It will execute the command `npx prettier '**/*.{json,sol,md}' --check && npx solhint 'contracts/**/*.sol'`, which will check all the solidity files in the project against a set of linting rules and report any errors or warnings.
-
-### Lint Solidity and fix issues
+Test:
 
 ```
-npm run lint:sol-fix
+npx hardhat test
 ```
 
-This command runs the Prettier and Solhint linters on all the Solidity files in the project and automatically fix any issues it finds.
+## License
 
-### Lint all
-
-```
-npm run lint
-```
-
-This command runs both TypeScript and Solidity linters in the project.
-
-### Lint all and fix issues
-
-```
-npm run lint:fix
-```
-
-This command runs both TypeScript and Solidity linters in the project and automatically fix any issues it finds.
-
-## Contribution
-
-If you find any issues or have suggestions for improvements, please open an issue or submit a pull request.
+MIT
